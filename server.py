@@ -1,34 +1,29 @@
-# menentukan alamat = route 
-# pip install bottle
 from bottle import route, run, static_file
 
+
+#rute"
 @route("/")
 def home():
-    return static_file("home.html", root= "halaman/page") #diarahkan ke folder halaman/page/home.html
+    return static_file("home.html", root="halaman/")
 
-@route("/sejarah")
-def sejarah():
-    return static_file("sejarah.html", root= "halaman/page")
 
-@route("/tentang")
-def tentang():
-    return "Ini adalah halaman tentang"
+@route("/mahasiswa")
+def mahasiswa():
+    return static_file("mahasiswa.html", root="halaman/")
+@route("/fakultas")
+def fakultas():
+    return static_file("fakultas.html", root="halaman/")
+@route("/jadwal")
+def jadwal():
+    return static_file("jadwal.html", root="halaman/")
 
-@route("/tentang/visimisi")
-def visimisi():
-    return "ini adalah halaman tentang visimisi"
 
-@route("/info")
-def info():
-    return "Ini adalah halaman info"
+#untuk konek ke booststrap
+@route("/assets/css/<filename:re:.*\.css>")
+def sejarah(filename):
+    return static_file(filename, root="assets/css")
+@route("/assets/js/<filename:re:.*\.js>")
+def sejarah(filename):
+    return static_file(filename, root="assets/js")
 
-@route("/info/berita")
-def info():
-    return "Ini adalah halaman info berita"
-
-@route("/info/pengumuman")
-def info():
-    return "Ini adalah halaman info pengumuman"
-
-# menjalankan server
-run(host="localhost", port=8080, debug=True)
+run(host='localhost', port=8080, debug=True)
