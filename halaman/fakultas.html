@@ -274,28 +274,37 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link d-flex align-items-center gap-2" href="./mahasiswa">
-                                    <svg class="bi">
-                                        <use xlink:href="#file-earmark" />
+                                    <svg class="bi" width="100%" height="100%" fill="currentColor">
+                                        <image href="
+                                        https://icon-library.com/images/student-icon/student-icon-14.jpg
+                                        "
+                                        width="100%" height="100%"></image>
                                     </svg>
                                     Mahasiswa
                                 </a>
-                            </li>
+                            </li> 
+                            
                             <li class="nav-item">
                                 <a class="nav-link d-flex align-items-center gap-2" href="./fakultas">
-                                    <svg class="bi">
-                                        <use xlink:href="#file-earmark" />
+                                    <svg class="bi" width="100%" height="100%" fill="currentColor">
+                                        <image href="
+                                        https://cdn.icon-icons.com/icons2/2980/PNG/512/book_open_book_read_icon_186999.png
+                                        "
+                                        width="100%" height="100%"></image>
                                     </svg>
                                     Fakultas
                                 </a>
-                            </li>
+                            </li> 
                             <li class="nav-item">
                                 <a class="nav-link d-flex align-items-center gap-2" href="./jadwal">
-                                    <svg class="bi">
-                                        <use xlink:href="#file-earmark" />
+                                    <svg class="bi" width="100%" height="100%" fill="currentColor">
+                                        <image href="
+                                        https://cdn.pixabay.com/photo/2017/01/31/20/40/calendar-2027122_1280.png"
+                                        width="100%" height="100%"></image>
                                     </svg>
                                     Jadwal
                                 </a>
-                            </li>
+                            </li> 
                         </ul>
 
                         <hr class="my-3">
@@ -306,7 +315,7 @@
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Master Mahasiswa</h1>
+                    <h1 class="h2">Master FAKULTAS</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <div class="btn-group me-2">
                             <button type="button" class="btn btn-sm btn-outline-secondary">Add</button>
@@ -321,35 +330,11 @@
                             <tr>
                                 <th scope="col">No</th>
                                 <th scope="col">Fakultas</th>
-                                <th scope="col">Jumlah Prodi</th>
                                 <th scope="col">Jumlah Mahasiswa</th>
+                                <th scope="col">Jumlah Prodi</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Teknologi Informasi</td>
-                                <td>10</td>
-                                <td>2000</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Bahasa dan seni</td>
-                                <td>5</td>
-                                <td>1000</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Keperawatan dan ilmu kedokteran</td>
-                                <td>3</td>
-                                <td>1500</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>Ekonomika dan Bisnis</td>
-                                <td>5</td>
-                                <td>4000</td>
-                            </tr>
+                        <tbody id="tfakultas">
                         </tbody>
                     </table>
                 </div>
@@ -357,6 +342,26 @@
         </div>
     </div>
     <script src="./assets/js/bootstrap.bundle.min.js"></script>
+    <script src="./assets/js/jquery.min.js"></script>
+    <script>
+        $.ajax({
+            // 	nama_fakultas, jumlah_mhs, jumlah_prodi)
+            url: "./data_fakultas",
+            data: {},
+            type: "GET",
+            dataType: "JSON",
+            success: function(data, status, jqxhr){
+                if (data.length > 0) {
+                    for (let index = 0; index < data.length; index++) {
+                        const nama_fakultas = data[index][1];
+                        const jumlah_mhs = data[index][2];
+                        const jumlah_prodi = data[index][3];
+                        $("#tfakultas").append("<tr><td>"+(index + 1)+"</td><td>"+nama_fakultas+"</td><td>"+jumlah_mhs+"</td><td>"+jumlah_prodi+"</td></tr>");
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>
