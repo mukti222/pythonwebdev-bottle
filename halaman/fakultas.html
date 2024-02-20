@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Home</title>
+    <title>Fakultas</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
     <link href="./assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <meta name="theme-color" content="#712cf9">
@@ -224,7 +224,7 @@
     </svg>
 
     <header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow" data-bs-theme="dark">
-        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" href="./">Data Mahasiswa</a>
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" href="./">Fakultas</a>
 
         <ul class="navbar-nav flex-row d-md-none">
             <li class="nav-item text-nowrap">
@@ -317,8 +317,12 @@
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Master FAKULTAS</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
+                        <!-- tambahan 2 -->
                         <div class="btn-group me-2">
-                            <button type="button" class="btn btn-sm btn-outline-secondary">Add</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                id="btntambah">Tambah</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                id="btnrefresh">Refresh</button>
                         </div>
                     </div>
                 </div>
@@ -332,6 +336,8 @@
                                 <th scope="col">Fakultas</th>
                                 <th scope="col">Jumlah Mahasiswa</th>
                                 <th scope="col">Jumlah Prodi</th>
+                                <!-- tambahan 3 -->
+                                <th scope="col"></th>
                             </tr>
                         </thead>
                         <tbody id="tfakultas">
@@ -341,9 +347,49 @@
             </main>
         </div>
     </div>
+    <!-- tambahan 4 -->
+     <!-- modalFakultas
+     formFakultas
+     modalFakultasTitle -->
+     <div class="modal fade" id="modalFakultas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+     <form id="formFakultas">
+         <input name="input_id" id="input_id" type="hidden" value="0">
+         <div class="modal-dialog">
+             <div class="modal-content">
+                 <div class="modal-header">
+                     <h1 class="modal-title fs-5" id="modalFakultasTitle">Modal title</h1>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="exitForm"></button>
+                 </div>
+                 <div class="modal-body" id="modalFakultasBody">
+                     <div id="pesan" class="mb-3"></div>
+                     <div class="mb-3">
+                         <label class="form-label">Nama Fakultas</label>
+                         <input type="text" name="input_nama_fakultas" class="form-control form-control-sm" id="input_nama_fakultas">
+                     </div>
+                     <div class="mb-3">
+                         <label class="form-label">Jumlah Mahasiswa</label>
+                         <input type="text" name="input_jumlah_mhs" class="form-control form-control-sm" id="input_jumlah_mhs">
+                     </div>
+                     <div class="mb-3">
+                         <label class="form-label">Jumlah Prodi</label>
+                         <input type="text" name="input_jumlah_prodi" class="form-control form-control-sm" id="input_jumlah_prodi">
+                     </div>
+                 </div>
+                 <div class="modal-footer">
+                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                         id="closeForm">Close</button>
+                     <button type="button" class="btn btn-primary" id="simpanForm">Simpan</button>
+                 </div>
+             </div>
+         </div>
+     </form>
+     </div>
+    <!-- tambahan 4 -->
+
     <script src="./assets/js/bootstrap.bundle.min.js"></script>
     <script src="./assets/js/jquery.min.js"></script>
-    <script>
+    <!-- <script>
         $.ajax({
             // 	nama_fakultas, jumlah_mhs, jumlah_prodi)
             url: "./data_fakultas",
@@ -361,7 +407,136 @@
                 }
             }
         });
+    </script> -->
+
+    <!-- tambahan 5 -->
+    <script>
+        function load_data() {
+            $("#tfakultas").html("");
+            $.ajax({
+                url: "./data_fakultas",
+                data: {},
+                type: "GET",
+                dataType: "JSON",
+                success: function (data, status, jqxhr) {
+                    if (data.length > 0) {
+                        for (let index = 0; index < data.length; index++) {
+                        
+                        const id = data[index][0];
+                        const nama_fakultas = data[index][1];
+                        const jumlah_mhs = data[index][2];
+                        const jumlah_prodi = data[index][3];
+                        const tbl = '<div class="btn-group btn-group-sm me-2">' +
+                                '<button type="button" class="btn btn-sm btn-outline-secondary" id="btn-ubah-'+id+'" onclick="func_ubah('+id+')" data-id="'+id+'" data-nama_fakultas="'+nama_fakultas+'" data-jumlah_mhs="'+jumlah_mhs+'" data-jumlah_prodi="'+jumlah_prodi+'" >Ubah</button>' +
+                                '<button type="button" class="btn btn-sm btn-outline-secondary" id="btn-hapus-'+id+'" onclick="func_hapus('+id+')" data-id="'+id+'" data-nama_fakultas="'+nama_fakultas+'" data-jumlah_mhs="'+jumlah_mhs+'" data-jumlah_prodi="'+jumlah_prodi+'" >Hapus</button>' +
+                                '</div>'
+                        $("#tfakultas").append("<tr><td>"+(index + 1)+"</td><td>"+nama_fakultas+"</td><td>"+jumlah_mhs+"</td><td>"+jumlah_prodi+"</td></tr>");
+                    }
+                    }
+                }
+            });
+        }
+        load_data(); //callback ngeload
+
+
+        $("#pesan").hide();
+        $("#pesan_hapus").hide();
+
+        //button refresh
+        $("#btnrefresh").click(function () {
+            load_data();
+        });
+
+        //button tambah done
+        $("#btntambah").click(function () {
+            $("#input_id").val(0);
+            $("#input_nama_fakultas").val("");
+            $("#input_jumlah_mhs").val("");
+            $("#input_jumlah_prodi").val("");
+            // $("#input_tlp").val("");
+            $("#modalFakultasTitle").text("Tambah Data Fakultas");
+            $("#modalFakultas").modal('show');
+        });
+
+        //simpan form
+        $("#simpanForm").click(function () {
+            $("#closeForm").hide();
+            $("#exitForm").hide();
+        
+            $.ajax({
+                //memanggil fungsi query rute /savemahasiswa
+                url: "./save_fakultas",
+                data: $("#formFakultas").serialize(),
+                type: "POST",
+                dataType: 'json',
+                success: function (data, status, jqxhr) {
+                    if (data.success == true) {
+                        $("#pesan").html('<div class="alert alert-success" role="alert">' + data.pesan + '</div>');
+                    } else {
+                        $("#pesan").html('<div class="alert alert-danger" role="alert">' + data.pesan + '</div>');
+                    }
+                    $("#pesan").show();
+                    setTimeout(function () {
+                        $("#exitForm").show();
+                        $("#closeForm").show();
+                        $("#pesan").hide();
+                    }, 6000);
+                    load_data()
+                }
+            });
+        });
+
+        //funtion ubah fakultas
+        function func_ubah(id) {
+            const dtid = $("#btn-ubah-"+id)
+            const xid = dtid.attr("data-id");
+            const xnama_fakultas = dtid.attr("data-nama_fakultas");
+            const xjumlah_mhs = dtid.attr("data-jumlah_mhs");
+            const xjumlah_prodi = dtid.attr("data-jumlah_prodi");
+            // const xtlp = dtid.attr("data-tlp");
+            $("#input_id").val(xid);
+            $("#input_nama_fakultas").val(xnama_fakultas);
+            $("#input_jumlah_mhs").val(xjumlah_mhs);
+            $("#input_jumlah_prodi").val(xjumlah_prodi);
+            // $("#input_tlp").val(xtlp);
+            $("#modalFakultasTitle").text("Ubah Data Fakultas");
+            $("#modalFakultas").modal('show');
+        }
+        
+        //function hapus
+        function func_hapus(id){
+            const dtid = $("#btn-ubah-"+id)
+            const xid = dtid.attr("data-id");
+            const xnama_fakultas = dtid.attr("data-nama_fakultas");
+            const xjumlah_mhs = dtid.attr("data-jumlah_mhs");
+            const xjumlah_prodi = dtid.attr("data-jumlah_prodi");
+            $.ajax({
+                url: "./hapus_fakultas",
+                data: {
+                    id: xid,
+                    nama_fakultas: xnama_fakultas,
+                    // nama: xjumlah_prodi
+                },
+                type: "POST",
+                dataType: "JSON",
+                success: function (data, status, jqxhr) {
+                    if (data.success == true) {
+                        $("#pesan_hapus").html('<div class="alert alert-success" role="alert">' + data.pesan + '</div>');
+                    } else {
+                        $("#pesan_hapus").html('<div class="alert alert-danger" role="alert">' + data.pesan + '</div>');
+                    }
+                    $("#pesan_hapus").show();
+                    load_data()
+                    setTimeout(function () {
+                        $("#pesan_hapus").hide();
+                    }, 6000);
+                }
+            });
+        }
     </script>
+    <!-- tambahan 5 -->
+
+     
 </body>
 
 </html>

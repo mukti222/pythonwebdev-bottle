@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Home</title>
+    <title>MAHASISWA</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
     <link href="./assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <meta name="theme-color" content="#712cf9">
@@ -156,8 +156,6 @@
             </li>
         </ul>
     </div>
-
-
     <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
         <symbol id="calendar3" viewBox="0 0 16 16">
             <path
@@ -222,7 +220,6 @@
                 d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
         </symbol>
     </svg>
-
     <header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow" data-bs-theme="dark">
         <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" href="./">Data Mahasiswa</a>
 
@@ -251,7 +248,6 @@
             <input class="form-control w-100 rounded-0 border-0" type="text" placeholder="Search" aria-label="Search">
         </div>
     </header>
-
     <div class="container-fluid">
         <div class="row">
             <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
@@ -317,8 +313,12 @@
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Master Mahasiswa</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
+                        <!-- tambahan 2 -->
                         <div class="btn-group me-2">
-                            <button type="button" class="btn btn-sm btn-outline-secondary">Add</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                id="btntambah">Tambah</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                id="btnrefresh">Refresh</button>
                         </div>
                     </div>
                 </div>
@@ -333,6 +333,8 @@
                                 <th scope="col">Nama Mahasiswa</th>
                                 <th scope="col">Alamat</th>
                                 <th scope="col">Tlp</th>
+                                <!-- tambahan 3 -->
+                                <th scope="col"></th>
                             </tr>
                         </thead>
                         <tbody id="tmahasiswa"></tbody>
@@ -341,9 +343,51 @@
             </main>
         </div>
     </div>
+ <!-- tambahan 4 -->
+    <div class="modal fade" id="modalMahasiswa" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <form id="formMahasiswa">
+        <input name="input_id" id="input_id" type="hidden" value="0">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalMahasiswaTitle">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="exitForm"></button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <div id="pesan" class="mb-3"></div>
+                    <div class="mb-3">
+                        <label class="form-label">Nim</label>
+                        <input type="text" name="input_nim" class="form-control form-control-sm" id="input_nim">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nama</label>
+                        <input type="text" name="input_nama" class="form-control form-control-sm" id="input_nama">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Alamat</label>
+                        <input type="text" name="input_alamat" class="form-control form-control-sm" id="input_alamat">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tlp</label>
+                        <input type="text" name="input_tlp" class="form-control form-control-sm" id="input_tlp">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        id="closeForm">Close</button>
+                    <button type="button" class="btn btn-primary" id="simpanForm">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    </div>
+ <!-- tambahan 4 -->
+
+
     <script src="./assets/js/bootstrap.bundle.min.js"></script>
     <script src="./assets/js/jquery.min.js"></script>
-    <script>
+    <!-- <script>
         $.ajax({
             url: "./data_mhs",
             data: {},
@@ -361,7 +405,131 @@
                 }
             }
         });
+    </script> -->
+
+    <!-- tambahan 5 -->
+    <script>
+        //fungsi nampilin data
+        function load_data() {
+            $("#tmahasiswa").html("");
+            $.ajax({
+                url: "./data_mhs",
+                data: {},
+                type: "GET",
+                dataType: "JSON",
+                success: function (data, status, jqxhr) {
+                    if (data.length > 0) {
+                        for (let index = 0; index < data.length; index++) {
+                            const id = data[index][0];
+                            const nim = data[index][1];
+                            const nama = data[index][2];
+                            const alamat = data[index][3];
+                            const tlp = data[index][4];
+                            const tbl = '<div class="btn-group btn-group-sm me-2">' +
+                                '<button type="button" class="btn btn-sm btn-outline-secondary" id="btn-ubah-'+id+'" onclick="func_ubah('+id+')" data-id="'+id+'" data-nim="'+nim+'" data-nama="'+nama+'" data-alamat="'+alamat+'" data-tlp="'+tlp+'">Ubah</button>' +
+                                '<button type="button" class="btn btn-sm btn-outline-secondary" id="btn-hapus-'+id+'" onclick="func_hapus('+id+')" data-id="'+id+'" data-nim="'+nim+'" data-nama="'+nama+'" data-alamat="'+alamat+'" data-tlp="'+tlp+'">Hapus</button>' +
+                                '</div>'
+                            $("#tmahasiswa").append("<tr><td>" + (index + 1) + "</td><td>" + nim + "</td><td>" + nama + "</td><td>" + alamat + "</td><td>" + tlp + "</td><td>" + tbl + "</td></tr>");
+                        }
+                    }
+                }
+            });
+        }
+        load_data(); //callback ngeload
+
+        $("#pesan").hide();
+        $("#pesan_hapus").hide();
+
+        //button refresh
+        $("#btnrefresh").click(function () {
+            load_data();
+        });
+
+        //button tambah
+        $("#btntambah").click(function () {
+            $("#input_id").val(0);
+            $("#input_nim").val("");
+            $("#input_nama").val("");
+            $("#input_alamat").val("");
+            $("#input_tlp").val("");
+            $("#modalMahasiswaTitle").text("Tambah Data Mahasiswa");
+            $("#modalMahasiswa").modal('show');
+        });
+
+        //simpan form
+        $("#simpanForm").click(function () {
+            $("#closeForm").hide();
+            $("#exitForm").hide();
+            $.ajax({
+                //memanggil fungsi query rute /savemahasiswa
+                url: "./save_mahasiswa",
+                data: $("#formMahasiswa").serialize(),
+                type: "POST",
+                dataType: 'json',
+                success: function (data, status, jqxhr) {
+                    if (data.success == true) {
+                        $("#pesan").html('<div class="alert alert-success" role="alert">' + data.pesan + '</div>');
+                    } else {
+                        $("#pesan").html('<div class="alert alert-danger" role="alert">' + data.pesan + '</div>');
+                    }
+                    $("#pesan").show();
+                    setTimeout(function () {
+                        $("#exitForm").show();
+                        $("#closeForm").show();
+                        $("#pesan").hide();
+                    }, 6000);
+                    load_data()
+                }
+            });
+        });
+        //funtion ubah
+        function func_ubah(id) {
+            const dtid = $("#btn-ubah-"+id)
+            const xid = dtid.attr("data-id");
+            const xnim = dtid.attr("data-nim");
+            const xnama = dtid.attr("data-nama");
+            const xalamat = dtid.attr("data-alamat");
+            const xtlp = dtid.attr("data-tlp");
+            $("#input_id").val(xid);
+            $("#input_nim").val(xnim);
+            $("#input_nama").val(xnama);
+            $("#input_alamat").val(xalamat);
+            $("#input_tlp").val(xtlp);
+            $("#modalMahasiswaTitle").text("Ubah Data Mahasiswa");
+            $("#modalMahasiswa").modal('show');
+        }
+        //function hapus
+        function func_hapus(id){
+            const dtid = $("#btn-ubah-"+id)
+            const xid = dtid.attr("data-id");
+            const xnim = dtid.attr("data-nim");
+            const xnama = dtid.attr("data-nama");
+            $.ajax({
+                url: "./hapus_mahasiswa",
+                data: {
+                    id: xid,
+                    nim: xnim,
+                    nama: xnama
+                },
+                type: "POST",
+                dataType: "JSON",
+                success: function (data, status, jqxhr) {
+                    if (data.success == true) {
+                        $("#pesan_hapus").html('<div class="alert alert-success" role="alert">' + data.pesan + '</div>');
+                    } else {
+                        $("#pesan_hapus").html('<div class="alert alert-danger" role="alert">' + data.pesan + '</div>');
+                    }
+                    $("#pesan_hapus").show();
+                    load_data()
+                    setTimeout(function () {
+                        $("#pesan_hapus").hide();
+                    }, 6000);
+                }
+            });
+        }
     </script>
+    <!-- tambahan 5 -->
+
 </body>
 
 </html>
