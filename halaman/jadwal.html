@@ -315,15 +315,20 @@
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Master JADWAL</h1>
+                    <h1 class="h2">JADWAL</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
+                        <!-- tambahan 2 -->
                         <div class="btn-group me-2">
-                            <button type="button" class="btn btn-sm btn-outline-secondary">Add</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                id="btntambah">Tambah</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                id="btnrefresh">Refresh</button>
                         </div>
+                        <!-- tambahan 2 -->
                     </div>
                 </div>
 
-                <h2>Section title</h2>
+                <h2>Daftar Jadwal Kuliah</h2>
                 <div class="table-responsive small">
                     <table class="table table-striped table-sm">
                         <thead>
@@ -333,6 +338,8 @@
                                 <th scope="col">Mata Kuliah</th>
                                 <th scope="col">Kode Dosen</th>
                                 <th scope="col">Nama Dosen</th>
+                                <!-- tambahan 3 -->
+                                <th scope="col"></th>
                             </tr>
                         </thead>
                         <tbody id="tjadwal">
@@ -342,9 +349,50 @@
             </main>
         </div>
     </div>
+<!-- tambahan 4 -->
+     <div class="modal fade" id="modalJadwal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+     <form id="formJadwal">
+         <input name="input_id" id="input_id" type="hidden" value="0">
+         <div class="modal-dialog">
+             <div class="modal-content">
+                 <div class="modal-header">
+                     <h1 class="modal-title fs-5" id="modalJadwalTitle">Modal title</h1>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="exitForm"></button>
+                 </div>
+                 <div class="modal-body" id="modalBody">
+                     <div id="pesan" class="mb-3"></div>
+                     <div class="mb-3">
+                         <label class="form-label">kode_matkul</label>
+                         <input type="text" name="input_kode_matkul" class="form-control form-control-sm" id="input_kode_matkul">
+                     </div>
+                     <div class="mb-3">
+                         <label class="form-label">nama_matkul</label>
+                         <input type="text" name="input_nama_matkul" class="form-control form-control-sm" id="input_nama_matkul">
+                     </div>
+                     <div class="mb-3">
+                         <label class="form-label">kode_dosen</label>
+                         <input type="text" name="input_kode_dosen" class="form-control form-control-sm" id="input_kode_dosen">
+                     </div>
+                     <div class="mb-3">
+                         <label class="form-label">nama_dosen</label>
+                         <input type="text" name="input_nama_dosen" class="form-control form-control-sm" id="input_nama_dosen">
+                     </div>
+                 </div>
+                 <div class="modal-footer">
+                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                         id="closeForm">Close</button>
+                     <button type="button" class="btn btn-primary" id="simpanForm">Simpan</button>
+                 </div>
+             </div>
+         </div>
+     </form>
+     </div>
+<!-- tambahan 4 -->
+
     <script src="./assets/js/bootstrap.bundle.min.js"></script>
     <script src="./assets/js/jquery.min.js"></script>
-    <script>
+    <!-- <script>
         $.ajax({
             url: "./data_jadwal",
             data: {},
@@ -362,7 +410,142 @@
                 }
             }
         });
-    </script>
-</body>
+    </script> -->
 
+<!-- tambahan 5 -->
+    <script>
+            //fungsi nampilin data
+            function load_data() {
+                $("#tjadwal").html("");
+                $.ajax({
+                    url: "./data_jadwal",
+                    data: {},
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data, status, jqxhr) {
+                        if (data.length > 0) {
+                            for (let index = 0; index < data.length; index++) {
+                                const id = data[index][0];
+                                const kode_matkul = data[index][1];
+                                const nama_matkul = data[index][2];
+                                const kode_dosen = data[index][3];
+                                const nama_dosen = data[index][4];
+                                const tbl = '<div class="btn-group btn-group-sm me-2">' +
+                                    '<button type="button" class="btn btn-sm btn-outline-secondary" id="btn-ubah-'+id+'" onclick="func_ubah('+id+')" data-id="'+id+'" data-kode_matkul="'+kode_matkul+'" data-nama_matkul="'+nama_matkul+'" data-kode_dosen="'+kode_dosen+'" data-nama_dosen="'+nama_dosen+'">Ubah</button>' +
+                                    '<button type="button" class="btn btn-sm btn-outline-secondary" id="btn-hapus-'+id+'" onclick="func_hapus('+id+')" data-id="'+id+'"data-kode_matkul="'+kode_matkul+'" data-nama_matkul="'+nama_matkul+'" data-kode_dosen="'+kode_dosen+'" data-nama_dosen="'+nama_dosen+'">Hapus</button>' +
+                                    '</div>'
+                                $("#tjadwal").append("<tr><td>" + (index + 1) + "</td><td>" + kode_matkul + "</td><td>" + nama_matkul + "</td><td>" + kode_dosen + "</td><td>" + nama_dosen + "</td><td>"+ tbl +"</td></tr>");
+                            }
+                        }
+                    }
+                });
+            }
+            load_data(); //callback ngeload
+    
+            $("#pesan").hide();
+            $("#pesan_hapus").hide();
+    
+            //button refresh
+            $("#btnrefresh").click(function () {
+                load_data();
+            });
+    
+            //button tambah
+            $("#btntambah").click(function () {
+                $("#input_id").val(0);
+                $("#input_kode_matkul").val("");
+                $("#input_nama_matkul").val("");
+                $("#input_kode_dosen").val("");
+                $("#input_nama_dosen").val("");
+                $("#modalJadwalTitle").text("Tambah Data Jadwal");
+                $("#modalJadwal").modal('show');
+            });
+    
+            //simpan form
+            $("#simpanForm").click(function () {
+                $("#closeForm").hide();
+                $("#exitForm").hide();
+                $.ajax({
+                    //memanggil fungsi query rute server
+                    url: "./save_jadwal",
+                    data: $("#formJadwal").serialize(),
+                    type: "POST",
+                    dataType: 'json',
+                    success: function (data, status, jqxhr) {
+                        if (data.success == true) {
+                            $("#pesan").html('<div class="alert alert-success" role="alert">' + data.pesan + '</div>');
+                        } else {
+                            $("#pesan").html('<div class="alert alert-danger" role="alert">' + data.pesan + '</div>');
+                        }
+                        $("#pesan").show();
+                        setTimeout(function () {
+                            $("#exitForm").show();
+                            $("#closeForm").show();
+                            $("#pesan").hide();
+                        }, 6000);
+                        load_data()
+                    }
+                });
+            });
+            //funtion ubah
+            function func_ubah(id) {
+                const dtid = $("#btn-ubah-"+id)
+                const xid = dtid.attr("data-id");
+                const xkode_matkul = dtid.attr("data-kode_matkul");
+                const xnama_matkul = dtid.attr("data-nama_matkul");
+                const xkode_dosen = dtid.attr("data-kode_dosen");
+                const xnama_dosen = dtid.attr("data-nama_dosen");
+                $("#input_id").val(xid);
+                $("#input_kode_matkul").val(xkode_matkul);
+                $("#input_nama_matkul").val(xnama_matkul);
+                $("#input_kode_dosen").val(xkode_dosen);
+                $("#input_nama_dosen").val(xnama_dosen);
+                $("#modalJadwalTitle").text("Ubah Data Jadwal");
+                $("#modalJadwal").modal('show');
+            }
+            //function hapus
+            function func_hapus(id){
+                const dtid = $("#btn-ubah-"+id)
+                const xid = dtid.attr("data-id");
+                const xkode_matkul = dtid.attr("data-kode_matkul");
+                // const xkode_dosen = dtid.attr("data-kode_dosen");
+                $.ajax({
+                    url: "./hapus_jadwal",
+                    data: {
+                        id: xid,
+                        kode_matkul: xkode_matkul
+                        // nama: xnama
+                    },
+                    type: "POST",
+                    dataType: "JSON",
+                    success: function (data, status, jqxhr) {
+                        if (data.success == true) {
+                            $("#pesan_hapus").html('<div class="alert alert-success" role="alert">' + data.pesan + '</div>');
+                        } else {
+                            $("#pesan_hapus").html('<div class="alert alert-danger" role="alert">' + data.pesan + '</div>');
+                        }
+                        $("#pesan_hapus").show();
+                        load_data()
+                        setTimeout(function () {
+                            $("#pesan_hapus").hide();
+                        }, 6000);
+                    }
+                });
+            }
+    </script>
+<!-- tambahan 5 -->
+    
+</body>
 </html>
+
+<!-- 
+modalJadwalTitle
+modalJadwal
+formJadwal
+
+
+kode_matkul
+nama_matkul
+kode_dosen
+nama_dosen
+ -->

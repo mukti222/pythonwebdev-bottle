@@ -315,7 +315,7 @@
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Master FAKULTAS</h1>
+                    <h1 class="h2">FAKULTAS</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <!-- tambahan 2 -->
                         <div class="btn-group me-2">
@@ -327,7 +327,7 @@
                     </div>
                 </div>
 
-                <h2>Section title</h2>
+                <h2>Daftar Fakultas</h2>
                 <div class="table-responsive small">
                     <table class="table table-striped table-sm">
                         <thead>
@@ -421,7 +421,6 @@
                 success: function (data, status, jqxhr) {
                     if (data.length > 0) {
                         for (let index = 0; index < data.length; index++) {
-                        
                         const id = data[index][0];
                         const nama_fakultas = data[index][1];
                         const jumlah_mhs = data[index][2];
@@ -430,8 +429,19 @@
                                 '<button type="button" class="btn btn-sm btn-outline-secondary" id="btn-ubah-'+id+'" onclick="func_ubah('+id+')" data-id="'+id+'" data-nama_fakultas="'+nama_fakultas+'" data-jumlah_mhs="'+jumlah_mhs+'" data-jumlah_prodi="'+jumlah_prodi+'" >Ubah</button>' +
                                 '<button type="button" class="btn btn-sm btn-outline-secondary" id="btn-hapus-'+id+'" onclick="func_hapus('+id+')" data-id="'+id+'" data-nama_fakultas="'+nama_fakultas+'" data-jumlah_mhs="'+jumlah_mhs+'" data-jumlah_prodi="'+jumlah_prodi+'" >Hapus</button>' +
                                 '</div>'
-                        $("#tfakultas").append("<tr><td>"+(index + 1)+"</td><td>"+nama_fakultas+"</td><td>"+jumlah_mhs+"</td><td>"+jumlah_prodi+"</td></tr>");
+                        $("#tfakultas").append("<tr><td>"+(index + 1)+"</td><td>"+nama_fakultas+"</td><td>"+jumlah_mhs+"</td><td>"+jumlah_prodi+"</td><td>"+ tbl +"</td></tr>");
                     }
+                    // for (let index = 0; index < data.length; index++) {
+                    //             const id = data[index][0];
+                    //             const nama_fakultas = data[index][1];
+                    //             const jumlah_mhs = data[index][2];
+                    //             const jumlah_prodi = data[index][3];
+                    //             const tbl = '<div class="btn-group btn-group-sm me-2">' +
+                    //                 '<button type="button" class="btn btn-sm btn-outline-secondary" id="btn-ubah-'+id+'" onclick="func_ubah('+id+')" data-id="'+id+'" data-nama_fakultas="'+nama_fakultas+'" data-jumlah_mhs="'+jumlah_mhs+'" data-jumlah_prodi="'+jumlah_prodi+'">Ubah</button>' +
+                    //                 '<button type="button" class="btn btn-sm btn-outline-secondary" id="btn-hapus-'+id+'" onclick="func_hapus('+id+')" data-id="'+id+'"data-nama_fakultas="'+nama_fakultas+'" data-jumlah_mhs="'+jumlah_mhs+'" data-jumlah_prodi="'+jumlah_prodi+'">Hapus</button>' +
+                    //                 '</div>'
+                    //             $("#tfakultas").append("<tr><td>" + (index + 1) + "</td><td>" + nama_fakultas + "</td><td>" + jumlah_mhs + "</td><td>" + jumlah_prodi + "</td><td>" + nama_dosen + "</td><td>"+ tbl +"</td></tr>");
+                    //         }
                     }
                 }
             });
